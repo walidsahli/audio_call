@@ -12,7 +12,7 @@
     <video id="video" height="200px" width="200px"></video>
   </body>
   <script>
-    const socket = new WebSocket("ws://" + location.host + "/");
+    const socket = new WebSocket("wss://" + location.host + "/");
     const player = new Audio();
     document.getElementById("call").addEventListener("click", () => {
       navigator.getUserMedia(
