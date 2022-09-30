@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Call</title>
+  </head>
+  <body>
+    <h1>call</h1>
+    <button id="call">call</button>
+    <button id="listen">listen</button>
+    <video id="video" height="200px" width="200px"></video>
+  </body>
+  <script>
+    const socket = new WebSocket("ws://" + location.host + "/");
+    const player = new Audio();
+    document.getElementById("call").addEventListener("click", () => {
+      navigator.getUserMedia(
+        { audio: true },
+        (stream) => {
+          const mediaRecorder = new MediaRecorder(stream);
+          mediaRecorder.addEventListener("dataavailable", (event) => {
+            socket.send(event.data);
+          });
+          setInterval(() => {
+            if (mediaRecorder.state === "recording") {
+              mediaRecorder.stop();
+            }
+            if (mediaRecorder.state !== "recording") {
+              mediaRecorder.start();
+            }
+          }, 1000);
+        },
+        () => {}
+      );
+    });
+    socket.onmessage = ({ data }) => {
+      const audio = URL.createObjectURL(data);
+      player.src = audio;
+      player.play();
+    };
+    document.getElementById("listen").addEventListener("click", () => {
+      socket.send("subscribe");
+    });
+  </script>
+  <script></script>
+</html>
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Call</title>
+  </head>
+  <body>
+    <h1>call</h1>
+    <button id="call">call</button>
+    <button id="listen">listen</button>
+    <h2 id="chunks"></h2>
+  </body>
+  <script>
+    const socket = new WebSocket("ws://" + location.host + "/");
+    document.getElementById("call").addEventListener("click", () => {
+      document.body.style.background = "green";
+      navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
+        const mediaRecorder = new MediaRecorder(stream);
+
+        mediaRecorder.addEventListener("dataavailable", (event) => {
+          socket.send(event.data);
+        });
+        mediaRecorder.start(1000);
+      });
+    });
+    document.getElementById("listen").addEventListener("click", () => {
+      socket.send("subscribe");
+    });
+    socket.onmessage = function (chunk) {
+      const audioBlob = chunk.data;
+      console.log(audioBlob);
+      const audioUrl = URL.createObjectURL([audioBlob]);
+      const audio = new Audio(audioUrl);
+      audio.play();
+      //   chunks.push(audioBlob);
+      //   const audioUrl = URL.createObjectURL(audioBlob);
+      //   const audio = new Audio(audioUrl);
+      //   audio.play();
+    };
+  </script>
+  <script></script>
+</html> -->
