@@ -2,11 +2,17 @@ const path = require("path");
 const http = require("http");
 const fs = require("fs");
 
+const cache = {};
+
 const server = http.createServer((req, res) => {
   if (req.url === "/") {
-    fs.createReadStream(path.join(__dirname + "/index.html"))
-      .pipe(res)
-      .on("close", () => res.end());
+    if ("file" in cache) {
+      res.end(cache["file"]);
+      return;
+    }
+    const f = fs.readFileSync(path.join(__dirname + "/index.html"));
+    cache["file"] = f;
+    res.end(f);
   }
 });
 const WebSocket = require("ws");
