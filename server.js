@@ -26,6 +26,8 @@ io.on("connection", (socket) => {
   });
 });
 
+server.keepAliveTimeout = 10 * 1000;
+
 server.listen(8081, () => {
   console.log("running");
 });
