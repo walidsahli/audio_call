@@ -14,22 +14,12 @@ const server = http.createServer((req, res) => {
     cache["file"] = f;
     res.end(f);
   }
-});
-const WebSocket = require("ws");
-const io = new WebSocket.Server({ server });
 
-const subscribers = [];
-
-io.on("connection", (socket) => {
-  socket.on("message", (data) => {
-    if (data.toString() === "subscribe") {
-      subscribers.push(socket);
-      return;
-    }
-    subscribers.forEach((socket) => {
-      socket.send(data);
-    });
-  });
+  if (req.url === "/test_api") {
+    res.write(JSON.stringify({ hello: "world" }));
+    res.end();
+    return;
+  }
 });
 
 server.keepAliveTimeout = 10 * 1000;
