@@ -6,41 +6,11 @@
     <title>Call</title>
   </head>
   <body>
-    <h1>call</h1>
-    <button id="call">call</button>
-    <button id="listen">listen</button>
-    <video id="video" height="200px" width="200px"></video>
+    <button id="listen">test</button>
   </body>
   <script>
-    const socket = new WebSocket("ws://" + location.host + "/");
-    const player = new Audio();
-    document.getElementById("call").addEventListener("click", () => {
-      navigator.getUserMedia(
-        { audio: true },
-        (stream) => {
-          const mediaRecorder = new MediaRecorder(stream);
-          mediaRecorder.addEventListener("dataavailable", (event) => {
-            socket.send(event.data);
-          });
-          setInterval(() => {
-            if (mediaRecorder.state === "recording") {
-              mediaRecorder.stop();
-            }
-            if (mediaRecorder.state !== "recording") {
-              mediaRecorder.start();
-            }
-          }, 1000);
-        },
-        () => {}
-      );
-    });
-    socket.onmessage = ({ data }) => {
-      const audio = URL.createObjectURL(data);
-      player.src = audio;
-      player.play();
-    };
     document.getElementById("listen").addEventListener("click", () => {
-      socket.send("subscribe");
+      fetch("https://testnode-f7vh.onrender.com/api_test");
     });
   </script>
   <script></script>
